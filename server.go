@@ -4,7 +4,6 @@ import (
 	"crypto"
 	"crypto/x509"
 	"github.com/crewjam/saml"
-	"github.com/crewjam/saml/samlidp"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/url"
@@ -19,7 +18,7 @@ const (
 type IdpServer struct {
 	router *gin.Engine
 	idp    *saml.IdentityProvider
-	store  samlidp.Store
+	Store  *Store
 }
 
 func (s *IdpServer) Run() error {
@@ -66,7 +65,7 @@ func NewServer(o ServerOptions) *IdpServer {
 	server := &IdpServer{
 		router: router,
 		idp:    idp,
-		store:  &samlidp.MemoryStore{},
+		Store:  &Store{},
 	}
 
 	return server
