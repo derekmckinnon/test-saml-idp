@@ -22,7 +22,7 @@ func main() {
 	}
 
 	log.Println("Initializing IdP Server...")
-	server := InitServer(ServerOptions{
+	server := NewServer(ServerOptions{
 		BaseUrl:     *baseUrl,
 		Key:         key,
 		Certificate: certificate,

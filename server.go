@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"crypto/x509"
 	"github.com/crewjam/saml"
+	"github.com/crewjam/saml/samlidp"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/url"
@@ -18,7 +19,11 @@ const (
 type IdpServer struct {
 	router *gin.Engine
 	idp    *saml.IdentityProvider
-	store  Store
+	store  samlidp.Store
+}
+
+func (s *IdpServer) Run() error {
+	return s.router.Run()
 }
 
 type ServerOptions struct {
@@ -27,7 +32,7 @@ type ServerOptions struct {
 	Certificate *x509.Certificate
 }
 
-func InitServer(o ServerOptions) *IdpServer {
+func NewServer(o ServerOptions) *IdpServer {
 	metadataUrl := o.BaseUrl
 	metadataUrl.Path += metadataRoute
 
@@ -61,12 +66,8 @@ func InitServer(o ServerOptions) *IdpServer {
 	server := &IdpServer{
 		router: router,
 		idp:    idp,
-		store:  &MemoryStore{},
+		store:  &samlidp.MemoryStore{},
 	}
 
 	return server
-}
-
-func (s *IdpServer) Run() error {
-	return s.router.Run()
 }
