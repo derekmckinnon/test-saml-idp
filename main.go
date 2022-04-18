@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlidp"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -41,6 +42,11 @@ func main() {
 		log.Fatalf("cannot initialize users: %v", err)
 	}
 
+	err = initializeServices(server.Store, config.Services)
+	if err != nil {
+		log.Fatalf("cannot initialize services: %v", err)
+	}
+
 	log.Println("Starting IdP Server...")
 	if err = server.Run(); err != nil {
 		log.Fatalf("cannot run server: %v", err)
@@ -64,6 +70,34 @@ func initializeUsers(store *Store, users []User) error {
 		}
 
 		log.Printf("Initialized User: %s\n", user.Username)
+	}
+
+	return nil
+}
+
+func initializeServices(store *Store, services []Service) error {
+	for _, service := range services {
+		acs := saml.IndexedEndpoint{
+			Location: service.AssertionConsumerService,
+		}
+
+		descriptor := saml.SPSSODescriptor{
+			AssertionConsumerServices: []saml.IndexedEndpoint{acs},
+		}
+
+		err := store.AddServiceProvider(&samlidp.Service{
+			Name: service.EntityId,
+			Metadata: saml.EntityDescriptor{
+				EntityID:         service.EntityId,
+				SPSSODescriptors: []saml.SPSSODescriptor{descriptor},
+			},
+		})
+
+		if err != nil {
+			return err
+		}
+
+		log.Printf("initialized service provider: %s\n", service.EntityId)
 	}
 
 	return nil

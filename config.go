@@ -6,7 +6,8 @@ import (
 )
 
 type Service struct {
-	Id string `yaml:"id"`
+	EntityId                 string `yaml:"entity_id"`
+	AssertionConsumerService string `yaml:"assertion_consumer_service"`
 }
 
 type User struct {

@@ -68,5 +68,7 @@ func NewServer(o ServerOptions) *IdpServer {
 		Store:  &Store{},
 	}
 
+	idp.ServiceProviderProvider = server
+
 	return server
 }
