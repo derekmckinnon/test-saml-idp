@@ -13,7 +13,10 @@
                 </div>
             {{end}}
 
-            <form method="post">
+            <form action="{{.Url}}" method="post">
+                <input type="hidden" name="SAMLRequest" value="{{.SamlRequest}}">
+                <input type="hidden" name="RelayState" value="{{.RelayState}}">
+
                 <div class="mb-3">
                     <label for="username" class="form-label">Username:</label>
                     <input type="text" name="username" id="username" value="{{.Username}}" class="form-control" required
