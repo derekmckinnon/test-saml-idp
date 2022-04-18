@@ -1,12 +1,14 @@
 package main
 
 import (
+	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlidp"
 )
 
 const (
 	usersPrefix    = "/users/"
 	servicesPrefix = "/services/"
+	sessionsPrefix = "/sessions/"
 )
 
 type Store struct {
@@ -29,4 +31,13 @@ func (s *Store) GetServiceProvider(id string) (service *samlidp.Service, err err
 
 func (s *Store) AddServiceProvider(service *samlidp.Service) error {
 	return s.Put(servicesPrefix+service.Metadata.EntityID, service)
+}
+
+func (s *Store) GetSession(id string) (session *saml.Session, err error) {
+	err = s.Get(sessionsPrefix+id, &session)
+	return
+}
+
+func (s *Store) AddSession(session *saml.Session) error {
+	return s.Put(sessionsPrefix+session.ID, session)
 }
