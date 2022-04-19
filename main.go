@@ -78,6 +78,7 @@ func initializeUsers(store *Store, users []User) error {
 func initializeServices(store *Store, services []Service) error {
 	for _, service := range services {
 		acs := saml.IndexedEndpoint{
+			Binding:  saml.HTTPPostBinding,
 			Location: service.AssertionConsumerService,
 		}
 
