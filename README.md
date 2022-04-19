@@ -22,7 +22,7 @@ This project requires Go 1.18+ for development.
 To run locally:
 
 ```shell
-go run main.go
+go run .
 ```
 
 This will launch the IdP on port `8080` by default.

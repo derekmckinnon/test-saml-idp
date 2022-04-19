@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlidp"
 	"golang.org/x/crypto/bcrypt"
@@ -9,7 +10,10 @@ import (
 )
 
 func main() {
-	baseUrl, err := url.Parse("http://localhost:8080")
+	baseUrlStr := flag.String("url", "http://localhost:8080", "The URL of the IdP")
+	flag.Parse()
+
+	baseUrl, err := url.Parse(*baseUrlStr)
 	if err != nil {
 		log.Fatalf("cannot parse base URL: %v", err)
 	}
