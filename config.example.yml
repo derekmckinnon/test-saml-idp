@@ -1,0 +1,10 @@
+services:
+  - entity_id: "foobar"
+    assertion_consumer_service: "http://localhost:5000"
+
+users:
+  - username: "test"
+    email: "test@test.com"
+    password: "test"
+    first_name: "Test"
+    last_name: "User"
