@@ -62,11 +62,12 @@ func (s *IdpServer) GetSession(w http.ResponseWriter, r *http.Request, req *saml
 	if cookie, err := r.Cookie("session"); err == nil {
 		session, err := s.Store.GetSession(cookie.Value)
 
-		switch err {
-		case samlidp.ErrNotFound:
-			s.serveLoginPage(w, r, req, "")
-			return nil
-		case nil:
+		if err != nil {
+			if err == samlidp.ErrNotFound {
+				s.serveLoginPage(w, r, req, "")
+				return nil
+			}
+
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return nil
 		}

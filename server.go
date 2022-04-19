@@ -69,6 +69,7 @@ func NewServer(o ServerOptions) *IdpServer {
 	}
 
 	idp.ServiceProviderProvider = server
+	idp.SessionProvider = server
 
 	return server
 }
