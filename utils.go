@@ -7,6 +7,16 @@ import (
 	"os"
 )
 
+func getEnvOrDefault(key, defaultValue string) string {
+	value, ok := os.LookupEnv(key)
+
+	if ok {
+		return value
+	}
+
+	return defaultValue
+}
+
 func loadPemFile(path string) (*pem.Block, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {

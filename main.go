@@ -1,19 +1,17 @@
 package main
 
 import (
-	"flag"
-	"github.com/crewjam/saml"
-	"github.com/crewjam/saml/samlidp"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/url"
 )
 
 func main() {
-	baseUrlStr := flag.String("url", "http://localhost:8080", "The URL of the IdP")
-	flag.Parse()
+	log.SetPrefix("[IdP] ")
 
-	baseUrl, err := url.Parse(*baseUrlStr)
+	port := getEnvOrDefault("PORT", "8080")
+	baseUrlStr := getEnvOrDefault("BASE_URL", "http://localhost:"+port)
+
+	baseUrl, err := url.Parse(baseUrlStr)
 	if err != nil {
 		log.Fatalf("cannot parse base URL: %v", err)
 	}
@@ -41,12 +39,12 @@ func main() {
 		Certificate: certificate,
 	})
 
-	err = initializeUsers(server.Store, config.Users)
+	err = server.LoadUsers(config.Users)
 	if err != nil {
 		log.Fatalf("cannot initialize users: %v", err)
 	}
 
-	err = initializeServices(server.Store, config.Services)
+	err = server.LoadServices(config.Services)
 	if err != nil {
 		log.Fatalf("cannot initialize services: %v", err)
 	}
@@ -55,55 +53,4 @@ func main() {
 	if err = server.Run(); err != nil {
 		log.Fatalf("cannot run server: %v", err)
 	}
-}
-
-func initializeUsers(store *Store, users []User) error {
-	for _, user := range users {
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-
-		err := store.AddUser(&samlidp.User{
-			Name:           user.Username,
-			Email:          user.Email,
-			HashedPassword: hashedPassword,
-			GivenName:      user.FirstName,
-			Surname:        user.LastName,
-		})
-
-		if err != nil {
-			return err
-		}
-
-		log.Printf("Initialized User: %s\n", user.Username)
-	}
-
-	return nil
-}
-
-func initializeServices(store *Store, services []Service) error {
-	for _, service := range services {
-		acs := saml.IndexedEndpoint{
-			Binding:  saml.HTTPPostBinding,
-			Location: service.AssertionConsumerService,
-		}
-
-		descriptor := saml.SPSSODescriptor{
-			AssertionConsumerServices: []saml.IndexedEndpoint{acs},
-		}
-
-		err := store.AddServiceProvider(&samlidp.Service{
-			Name: service.EntityId,
-			Metadata: saml.EntityDescriptor{
-				EntityID:         service.EntityId,
-				SPSSODescriptors: []saml.SPSSODescriptor{descriptor},
-			},
-		})
-
-		if err != nil {
-			return err
-		}
-
-		log.Printf("initialized service provider: %s\n", service.EntityId)
-	}
-
-	return nil
 }

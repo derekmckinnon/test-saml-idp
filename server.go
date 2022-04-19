@@ -4,7 +4,9 @@ import (
 	"crypto"
 	"crypto/x509"
 	"github.com/crewjam/saml"
+	"github.com/crewjam/saml/samlidp"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/url"
 )
@@ -19,6 +21,57 @@ type IdpServer struct {
 	router *gin.Engine
 	idp    *saml.IdentityProvider
 	Store  *Store
+}
+
+func (s *IdpServer) LoadUsers(users []User) error {
+	for _, user := range users {
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+
+		err := s.Store.AddUser(&samlidp.User{
+			Name:           user.Username,
+			Email:          user.Email,
+			HashedPassword: hashedPassword,
+			GivenName:      user.FirstName,
+			Surname:        user.LastName,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		log.Printf("Initialized User: %s\n", user.Username)
+	}
+
+	return nil
+}
+
+func (s *IdpServer) LoadServices(services []Service) error {
+	for _, service := range services {
+		acs := saml.IndexedEndpoint{
+			Binding:  saml.HTTPPostBinding,
+			Location: service.AssertionConsumerService,
+		}
+
+		descriptor := saml.SPSSODescriptor{
+			AssertionConsumerServices: []saml.IndexedEndpoint{acs},
+		}
+
+		err := s.Store.AddServiceProvider(&samlidp.Service{
+			Name: service.EntityId,
+			Metadata: saml.EntityDescriptor{
+				EntityID:         service.EntityId,
+				SPSSODescriptors: []saml.SPSSODescriptor{descriptor},
+			},
+		})
+
+		if err != nil {
+			return err
+		}
+
+		log.Printf("Initialized service provider: %s\n", service.EntityId)
+	}
+
+	return nil
 }
 
 func (s *IdpServer) Run() error {
