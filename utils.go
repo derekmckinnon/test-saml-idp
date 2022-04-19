@@ -24,9 +24,7 @@ func loadPrivateKey() (crypto.PrivateKey, error) {
 		return nil, err
 	}
 
-	key, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
-
-	return key, nil
+	return x509.ParsePKCS8PrivateKey(block.Bytes)
 }
 
 func loadCertificate() (*x509.Certificate, error) {
@@ -35,7 +33,5 @@ func loadCertificate() (*x509.Certificate, error) {
 		return nil, err
 	}
 
-	certificate, _ := x509.ParseCertificate(block.Bytes)
-
-	return certificate, nil
+	return x509.ParseCertificate(block.Bytes)
 }
