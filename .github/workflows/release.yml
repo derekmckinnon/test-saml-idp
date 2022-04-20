@@ -5,7 +5,7 @@ on:
 
 jobs:
   release:
-    if: ${{ github.repository_owner == "derekmckinnon" }}
+    if: ${{ github.repository_owner == 'derekmckinnon' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
