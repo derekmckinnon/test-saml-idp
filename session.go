@@ -1,4 +1,4 @@
-package main
+package idp
 
 import (
 	"encoding/base64"
@@ -12,7 +12,7 @@ import (
 
 var sessionMaxAge = time.Hour
 
-func (s *IdpServer) GetSession(w http.ResponseWriter, r *http.Request, req *saml.IdpAuthnRequest) *saml.Session {
+func (s *Server) GetSession(w http.ResponseWriter, r *http.Request, req *saml.IdpAuthnRequest) *saml.Session {
 	if r.Method == http.MethodPost && r.PostForm.Get("username") != "" {
 		user, err := s.Store.GetUser(r.PostForm.Get("username"))
 		if err != nil {
@@ -84,7 +84,7 @@ func (s *IdpServer) GetSession(w http.ResponseWriter, r *http.Request, req *saml
 	return nil
 }
 
-func (s *IdpServer) serveLoginPage(w http.ResponseWriter, r *http.Request, req *saml.IdpAuthnRequest, toast string) {
+func (s *Server) serveLoginPage(w http.ResponseWriter, r *http.Request, req *saml.IdpAuthnRequest, toast string) {
 	data := struct {
 		Username    string
 		Toast       string

@@ -1,6 +1,7 @@
 package main
 
 import (
+	idp "github.com/derekmckinnon/test-saml-idp"
 	"log"
 	"net/url"
 )
@@ -26,14 +27,14 @@ func main() {
 		log.Fatalf("cannot load certificate: %v", err)
 	}
 
-	config := Config{}
+	config := idp.Config{}
 	err = config.InitFromFile("./config.yml")
 	if err != nil {
 		log.Fatalf("cannot load config: %v", err)
 	}
 
 	log.Println("Initializing IdP Server...")
-	server := NewServer(ServerOptions{
+	server := idp.New(idp.ServerOptions{
 		BaseUrl:     *baseUrl,
 		Key:         key,
 		Certificate: certificate,

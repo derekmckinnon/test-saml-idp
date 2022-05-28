@@ -5,8 +5,8 @@ WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY *.go ./
-RUN go build -o ./test-saml-idp .
+COPY . .
+RUN go build ./cmd/server
 
 FROM gcr.io/distroless/base
 
@@ -16,10 +16,10 @@ ENV GIN_MODE=release
 ENV PORT=8080
 ENV BASE_URL=http://localhost:$PORT
 
-COPY --from=build /src/test-saml-idp ./
+COPY --from=build /src/server ./
 COPY *.pem ./
 COPY templates ./templates
 
 EXPOSE $PORT
 
-ENTRYPOINT ["./test-saml-idp"]
+ENTRYPOINT ["./server"]

@@ -1,4 +1,4 @@
-package main
+package idp
 
 import (
 	"crypto"
@@ -17,13 +17,13 @@ const (
 	ssoRoute      = "/sso"
 )
 
-type IdpServer struct {
+type Server struct {
 	router *gin.Engine
 	idp    *saml.IdentityProvider
 	Store  *Store
 }
 
-func (s *IdpServer) LoadUsers(users []User) error {
+func (s *Server) LoadUsers(users []User) error {
 	for _, user := range users {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
@@ -45,7 +45,7 @@ func (s *IdpServer) LoadUsers(users []User) error {
 	return nil
 }
 
-func (s *IdpServer) LoadServices(services []Service) error {
+func (s *Server) LoadServices(services []Service) error {
 	for _, service := range services {
 		acs := saml.IndexedEndpoint{
 			Binding:  saml.HTTPPostBinding,
@@ -74,7 +74,7 @@ func (s *IdpServer) LoadServices(services []Service) error {
 	return nil
 }
 
-func (s *IdpServer) Run() error {
+func (s *Server) Run() error {
 	return s.router.Run()
 }
 
@@ -84,7 +84,7 @@ type ServerOptions struct {
 	Certificate *x509.Certificate
 }
 
-func NewServer(o ServerOptions) *IdpServer {
+func New(o ServerOptions) *Server {
 	metadataUrl := o.BaseUrl
 	metadataUrl.Path += metadataRoute
 
@@ -115,7 +115,7 @@ func NewServer(o ServerOptions) *IdpServer {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	server := &IdpServer{
+	server := &Server{
 		router: router,
 		idp:    idp,
 		Store:  &Store{},
