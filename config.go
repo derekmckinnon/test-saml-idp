@@ -1,4 +1,4 @@
-package main
+package idp
 
 import (
 	"gopkg.in/yaml.v2"

@@ -1,4 +1,4 @@
-package main
+package idp
 
 import (
 	"github.com/crewjam/saml"
