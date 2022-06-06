@@ -115,6 +115,10 @@ func New(o ServerOptions) *Server {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
+	router.GET("/health", func(c *gin.Context) {
+		c.String(200, "Healthy")
+	})
+
 	server := &Server{
 		router: router,
 		idp:    idp,
