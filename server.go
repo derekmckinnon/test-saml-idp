@@ -102,6 +102,8 @@ func New(o ServerOptions) *Server {
 	router := gin.Default()
 	router.LoadHTMLGlob(templatesGlob)
 
+	store := &Store{}
+
 	router.GET(metadataRoute, func(c *gin.Context) {
 		metadata := idp.Metadata()
 		c.XML(200, metadata)
@@ -119,10 +121,33 @@ func New(o ServerOptions) *Server {
 		c.String(200, "Healthy")
 	})
 
+	router.GET("/", func(c *gin.Context) {
+		users, err := store.GetUsers()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"error": err,
+			})
+			return
+		}
+
+		services, err := store.GetServiceProviders()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"error": err,
+			})
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"users":    users,
+			"services": services,
+		})
+	})
+
 	server := &Server{
 		router: router,
 		idp:    idp,
-		Store:  &Store{},
+		Store:  store,
 	}
 
 	idp.ServiceProviderProvider = server

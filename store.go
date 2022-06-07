@@ -55,20 +55,17 @@ func (s *Store) AddSession(session *saml.Session) error {
 }
 
 func getResources[T any](store *Store, prefix string, getter func(string) (*T, error)) ([]*T, error) {
-	keys, err := store.List(prefix)
-	if err != nil {
-		return nil, err
-	}
+	keys, _ := store.List(prefix)
 
-	resources := make([]*T, 0, len(keys))
+	resources := make([]*T, len(keys))
 
-	for _, key := range keys {
+	for i, key := range keys {
 		resource, err := getter(key)
 		if err != nil {
 			return nil, err
 		}
 
-		resources = append(resources, resource)
+		resources[i] = resource
 	}
 
 	return resources, nil
