@@ -20,6 +20,10 @@ func (s *Store) GetUser(name string) (user *samlidp.User, err error) {
 	return
 }
 
+func (s *Store) GetUsers() ([]*samlidp.User, error) {
+	return getResources[samlidp.User](s, usersPrefix, s.GetUser)
+}
+
 func (s *Store) AddUser(user *samlidp.User) error {
 	return s.Put(usersPrefix+user.Name, user)
 }
@@ -27,6 +31,10 @@ func (s *Store) AddUser(user *samlidp.User) error {
 func (s *Store) GetServiceProvider(id string) (service *samlidp.Service, err error) {
 	err = s.Get(servicesPrefix+id, &service)
 	return
+}
+
+func (s *Store) GetServiceProviders() ([]*samlidp.Service, error) {
+	return getResources[samlidp.Service](s, servicesPrefix, s.GetServiceProvider)
 }
 
 func (s *Store) AddServiceProvider(service *samlidp.Service) error {
@@ -38,6 +46,30 @@ func (s *Store) GetSession(id string) (session *saml.Session, err error) {
 	return
 }
 
+func (s *Store) GetSessions() ([]*saml.Session, error) {
+	return getResources[saml.Session](s, sessionsPrefix, s.GetSession)
+}
+
 func (s *Store) AddSession(session *saml.Session) error {
 	return s.Put(sessionsPrefix+session.ID, session)
+}
+
+func getResources[T any](store *Store, prefix string, getter func(string) (*T, error)) ([]*T, error) {
+	keys, err := store.List(prefix)
+	if err != nil {
+		return nil, err
+	}
+
+	resources := make([]*T, 0, len(keys))
+
+	for _, key := range keys {
+		resource, err := getter(key)
+		if err != nil {
+			return nil, err
+		}
+
+		resources = append(resources, resource)
+	}
+
+	return resources, nil
 }
