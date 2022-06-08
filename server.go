@@ -122,25 +122,34 @@ func New(o ServerOptions) *Server {
 	})
 
 	router.GET("/", func(c *gin.Context) {
-		users, err := store.GetUsers()
-		if err != nil {
+		handleErr := func(err error) {
 			c.JSON(500, gin.H{
 				"error": err,
 			})
+		}
+
+		users, err := store.GetUsers()
+		if err != nil {
+			handleErr(err)
 			return
 		}
 
 		services, err := store.GetServiceProviders()
 		if err != nil {
-			c.JSON(500, gin.H{
-				"error": err,
-			})
+			handleErr(err)
+			return
+		}
+
+		sessions, err := store.GetSessions()
+		if err != nil {
+			handleErr(err)
 			return
 		}
 
 		c.JSON(200, gin.H{
 			"users":    users,
 			"services": services,
+			"sessions": sessions,
 		})
 	})
 
