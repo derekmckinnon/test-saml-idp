@@ -1,33 +1,27 @@
 package idp
 
-import (
-	"gopkg.in/yaml.v2"
-	"os"
-)
-
-type Service struct {
-	EntityId                 string `yaml:"entity_id"`
-	AssertionConsumerService string `yaml:"assertion_consumer_service"`
-}
-
-type User struct {
-	Username  string `yaml:"username"`
-	Email     string `yaml:"email"`
-	Password  string `yaml:"password"`
-	FirstName string `yaml:"first_name"`
-	LastName  string `yaml:"last_name"`
-}
+import "fmt"
 
 type Config struct {
+	Host     string
+	Port     string
 	Services []Service
 	Users    []User
 }
 
-func (config *Config) InitFromFile(path string) error {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return err
-	}
+func (c Config) BaseUrl() string {
+	return fmt.Sprintf("%s:%s", c.Host, c.Port)
+}
 
-	return yaml.Unmarshal(data, config)
+type Service struct {
+	EntityId                 string `mapstructure:"entity_id"`
+	AssertionConsumerService string `mapstructure:"assertion_consumer_service"`
+}
+
+type User struct {
+	Username  string
+	Email     string
+	Password  string
+	FirstName string `mapstructure:"first_name"`
+	LastName  string `mapstructure:"last_name"`
 }

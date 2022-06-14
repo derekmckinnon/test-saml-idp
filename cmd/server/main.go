@@ -1,18 +1,25 @@
 package main
 
 import (
+	"crypto"
+	"crypto/x509"
+	"encoding/pem"
 	idp "github.com/derekmckinnon/test-saml-idp"
+	"github.com/spf13/viper"
 	"log"
 	"net/url"
+	"os"
 )
 
 func main() {
 	log.SetPrefix("[IdP] ")
 
-	port := getEnvOrDefault("PORT", "8080")
-	baseUrlStr := getEnvOrDefault("BASE_URL", "http://localhost:"+port)
+	config, err := loadConfig()
+	if err != nil {
+		log.Fatalf("error loading configuration: %v", err)
+	}
 
-	baseUrl, err := url.Parse(baseUrlStr)
+	baseUrl, err := url.Parse(config.Host + config.Port)
 	if err != nil {
 		log.Fatalf("cannot parse base URL: %v", err)
 	}
@@ -25,12 +32,6 @@ func main() {
 	certificate, err := loadCertificate()
 	if err != nil {
 		log.Fatalf("cannot load certificate: %v", err)
-	}
-
-	config := idp.Config{}
-	err = config.InitFromFile("./config.yml")
-	if err != nil {
-		log.Fatalf("cannot load config: %v", err)
 	}
 
 	log.Println("Initializing IdP Server...")
@@ -54,4 +55,67 @@ func main() {
 	if err = server.Run(); err != nil {
 		log.Fatalf("cannot run server: %v", err)
 	}
+}
+
+func loadConfig() (*idp.Config, error) {
+	viper.SetDefault("Host", "http://localhost")
+	viper.SetDefault("Port", "8080")
+
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath("/etc/test-saml-idp/")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+
+	err := viper.BindEnv("Host", "HOST")
+	if err != nil {
+		return nil, err
+	}
+
+	err = viper.BindEnv("Port", "PORT")
+	if err != nil {
+		return nil, err
+	}
+
+	err = viper.ReadInConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	config := &idp.Config{}
+	err = viper.Unmarshal(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
+}
+
+func loadPemFile(path string) (*pem.Block, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	block, _ := pem.Decode(data)
+
+	return block, nil
+}
+
+func loadPrivateKey() (crypto.PrivateKey, error) {
+	block, err := loadPemFile("./idp_key.pem")
+	if err != nil {
+		return nil, err
+	}
+
+	return x509.ParsePKCS8PrivateKey(block.Bytes)
+}
+
+func loadCertificate() (*x509.Certificate, error) {
+	block, err := loadPemFile("./idp_cert.pem")
+	if err != nil {
+		return nil, err
+	}
+
+	return x509.ParseCertificate(block.Bytes)
 }
