@@ -19,7 +19,7 @@ func main() {
 		log.Fatalf("error loading configuration: %v", err)
 	}
 
-	baseUrl, err := url.Parse(config.Host + config.Port)
+	baseUrl, err := url.Parse(config.Host)
 	if err != nil {
 		log.Fatalf("cannot parse base URL: %v", err)
 	}
@@ -58,8 +58,7 @@ func main() {
 }
 
 func loadConfig() (*idp.Config, error) {
-	viper.SetDefault("Host", "http://localhost")
-	viper.SetDefault("Port", "8080")
+	viper.SetDefault("Host", "http://localhost:8080")
 
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
@@ -68,11 +67,6 @@ func loadConfig() (*idp.Config, error) {
 	viper.AutomaticEnv()
 
 	err := viper.BindEnv("Host", "HOST")
-	if err != nil {
-		return nil, err
-	}
-
-	err = viper.BindEnv("Port", "PORT")
 	if err != nil {
 		return nil, err
 	}
