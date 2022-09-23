@@ -1,20 +1,18 @@
 package idp
 
 import (
-	"crypto"
-	"crypto/x509"
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlidp"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-	"net/url"
 )
 
 const (
 	templatesGlob = "./templates/*.tmpl"
 	metadataRoute = "/metadata"
 	ssoRoute      = "/sso"
+	healthRoute   = "/health"
 )
 
 type Server struct {
@@ -23,13 +21,9 @@ type Server struct {
 	Store  *Store
 }
 
-type ServerOptions struct {
-	BaseUrl     url.URL
-	Key         crypto.PrivateKey
-	Certificate *x509.Certificate
-}
-
 func New(o ServerOptions) *Server {
+	basePath := o.getBasePath()
+
 	metadataUrl := o.BaseUrl
 	metadataUrl.Path += metadataRoute
 
@@ -49,24 +43,24 @@ func New(o ServerOptions) *Server {
 
 	store := &Store{}
 
-	router.GET(metadataRoute, func(c *gin.Context) {
+	router.GET(basePath+metadataRoute, func(c *gin.Context) {
 		metadata := idp.Metadata()
 		c.XML(200, metadata)
 	})
 
-	router.GET(ssoRoute, func(c *gin.Context) {
+	router.GET(basePath+ssoRoute, func(c *gin.Context) {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	router.POST(ssoRoute, func(c *gin.Context) {
+	router.POST(basePath+ssoRoute, func(c *gin.Context) {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	router.GET("/health", func(c *gin.Context) {
+	router.GET(basePath+healthRoute, func(c *gin.Context) {
 		c.String(200, "Healthy")
 	})
 
-	router.GET("/", func(c *gin.Context) {
+	router.GET(basePath, func(c *gin.Context) {
 		handleErr := func(err error) {
 			c.JSON(500, gin.H{
 				"error": err,
