@@ -14,6 +14,13 @@
             {{end}}
 
             {{if .Users}}
+                <script>
+                    function login(username, password) {
+                        document.getElementById("username").value = username;
+                        document.getElementById("password").value = password;
+                        document.getElementById("form").submit();
+                    }
+                </script>
                 <div class="mt-3">
                     <h2>Test Accounts</h2>
                     <table class="table table-sm">
@@ -24,6 +31,7 @@
                             <th>Email</th>
                             <th>First Name</th>
                             <th>Last Name</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -34,6 +42,11 @@
                                     <td>{{.Email}}</td>
                                     <td>{{.FirstName}}</td>
                                     <td>{{.LastName}}</td>
+                                    <td>
+                                        <button class="btn btn-outline-dark btn-sm" onclick="login('{{.Username}}', '{{.Password}}')">
+                                            Login as {{.Username}}
+                                        </button>
+                                    </td>
                                 </tr>
                             {{end}}
                         </tbody>
@@ -47,7 +60,7 @@
                 </div>
             {{end}}
 
-            <form action="{{.Url}}" method="post" autocomplete="off" class="mt-3">
+            <form id="form" action="{{.Url}}" method="post" autocomplete="off" class="mt-3">
                 <input type="hidden" name="SAMLRequest" value="{{.SamlRequest}}">
                 <input type="hidden" name="RelayState" value="{{.RelayState}}">
 
