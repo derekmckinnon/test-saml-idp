@@ -1,9 +1,10 @@
 package idp
 
 type Config struct {
-	Host     string
-	Services []Service
-	Users    []User
+	Host             string           `mapstructure:"host"`
+	Services         []Service        `mapstructure:"services"`
+	Users            []User           `mapstructure:"users"`
+	LoginPageOptions LoginPageOptions `mapstructure:"login_page"`
 }
 
 type Service struct {
@@ -12,9 +13,15 @@ type Service struct {
 }
 
 type User struct {
-	Username  string
-	Email     string
-	Password  string
+	Username  string `mapstructure:"username"`
+	Email     string `mapstructure:"email"`
+	Password  string `mapstructure:"password"`
 	FirstName string `mapstructure:"first_name"`
 	LastName  string `mapstructure:"last_name"`
+}
+
+type LoginPageOptions struct {
+	Title       string `mapstructure:"title"`
+	Description string `mapstructure:"description"`
+	DumpUsers   bool   `mapstructure:"dump_users"`
 }

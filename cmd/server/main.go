@@ -7,7 +7,6 @@ import (
 	idp "github.com/derekmckinnon/test-saml-idp"
 	"github.com/spf13/viper"
 	"log"
-	"net/url"
 	"os"
 )
 
@@ -17,11 +16,6 @@ func main() {
 	config, err := loadConfig()
 	if err != nil {
 		log.Fatalf("error loading configuration: %v", err)
-	}
-
-	baseUrl, err := url.Parse(config.Host)
-	if err != nil {
-		log.Fatalf("cannot parse base URL: %v", err)
 	}
 
 	key, err := loadPrivateKey()
@@ -36,7 +30,7 @@ func main() {
 
 	log.Println("Initializing IdP Server...")
 	server := idp.New(idp.ServerOptions{
-		BaseUrl:     *baseUrl,
+		Config:      config,
 		Key:         key,
 		Certificate: certificate,
 	})

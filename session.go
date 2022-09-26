@@ -6,6 +6,7 @@ import (
 	"github.com/crewjam/saml/samlidp"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"html/template"
 	"net/http"
 	"time"
 )
@@ -84,19 +85,40 @@ func (s *Server) GetSession(w http.ResponseWriter, r *http.Request, req *saml.Id
 	return nil
 }
 
+type LoginPageData struct {
+	Title       string
+	Description template.HTML
+	Users       []User
+	Toast       string
+	Username    string
+	Url         string
+	SamlRequest string
+	RelayState  string
+}
+
 func (s *Server) serveLoginPage(w http.ResponseWriter, r *http.Request, req *saml.IdpAuthnRequest, toast string) {
-	data := struct {
-		Username    string
-		Toast       string
-		Url         string
-		SamlRequest string
-		RelayState  string
-	}{
-		Username:    r.PostForm.Get("username"),
+	data := LoginPageData{
+		Title:       "Login",
+		Description: "",
 		Toast:       toast,
+		Username:    r.PostForm.Get("username"),
 		Url:         req.IDP.SSOURL.String(),
 		SamlRequest: base64.StdEncoding.EncodeToString(req.RequestBuffer),
 		RelayState:  req.RelayState,
+	}
+
+	options := s.config.LoginPageOptions
+
+	if options.Title != "" {
+		data.Title = options.Title
+	}
+
+	if options.Description != "" {
+		data.Description = renderMarkdown(options.Description)
+	}
+
+	if options.DumpUsers {
+		data.Users = s.config.Users
 	}
 
 	render := s.router.HTMLRender.Instance("login.tmpl", data)

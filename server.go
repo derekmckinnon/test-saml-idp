@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"net/url"
 )
 
 const (
@@ -16,32 +17,60 @@ const (
 )
 
 type Server struct {
-	router *gin.Engine
+	config *Config
 	idp    *saml.IdentityProvider
+	router *gin.Engine
 	Store  *Store
 }
 
-func New(o ServerOptions) *Server {
-	basePath := o.getBasePath()
+func New(options ServerOptions) *Server {
+	config := options.Config
 
-	metadataUrl := o.BaseUrl
+	host, err := url.Parse(config.Host)
+	if err != nil {
+		log.Fatalf("cannot parse host URL: %v", err)
+	}
+
+	idp := buildIdp(*host, options)
+
+	router := buildRouter(*host, idp)
+
+	server := &Server{
+		config: config,
+		idp:    idp,
+		router: router,
+		Store:  &Store{},
+	}
+
+	idp.ServiceProviderProvider = server
+	idp.SessionProvider = server
+
+	return server
+}
+
+func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
+	metadataUrl := host
 	metadataUrl.Path += metadataRoute
 
-	ssoUrl := o.BaseUrl
+	ssoUrl := host
 	ssoUrl.Path += ssoRoute
 
 	idp := &saml.IdentityProvider{
 		Logger:      log.Default(),
-		Key:         o.Key,
-		Certificate: o.Certificate,
+		Certificate: options.Certificate,
+		Key:         options.Key,
 		MetadataURL: metadataUrl,
 		SSOURL:      ssoUrl,
 	}
 
+	return idp
+}
+
+func buildRouter(host url.URL, idp *saml.IdentityProvider) *gin.Engine {
+	basePath := getBasePath(host)
+
 	router := gin.Default()
 	router.LoadHTMLGlob(templatesGlob)
-
-	store := &Store{}
 
 	router.GET(basePath+metadataRoute, func(c *gin.Context) {
 		metadata := idp.Metadata()
@@ -60,48 +89,7 @@ func New(o ServerOptions) *Server {
 		c.String(200, "Healthy")
 	})
 
-	router.GET(basePath, func(c *gin.Context) {
-		handleErr := func(err error) {
-			c.JSON(500, gin.H{
-				"error": err,
-			})
-		}
-
-		users, err := store.GetUsers()
-		if err != nil {
-			handleErr(err)
-			return
-		}
-
-		services, err := store.GetServiceProviders()
-		if err != nil {
-			handleErr(err)
-			return
-		}
-
-		sessions, err := store.GetSessions()
-		if err != nil {
-			handleErr(err)
-			return
-		}
-
-		c.JSON(200, gin.H{
-			"users":    users,
-			"services": services,
-			"sessions": sessions,
-		})
-	})
-
-	server := &Server{
-		router: router,
-		idp:    idp,
-		Store:  store,
-	}
-
-	idp.ServiceProviderProvider = server
-	idp.SessionProvider = server
-
-	return server
+	return router
 }
 
 func (s *Server) LoadUsers(users []User) error {
