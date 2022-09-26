@@ -1,3 +1,11 @@
+login_page:
+  title: "Login to Foobar"
+  dump_users: true
+  description: |
+    **This is a test IdP**
+    
+    This is a _test_ of [Markdown](https://github.com/gomarkdown/markdown) rendering.
+
 services:
   - entity_id: "foobar"
     assertion_consumer_service: "http://localhost:5000"
