@@ -1,18 +1,18 @@
-login_page:
-  title: "Login to Foobar"
-  dump_users: true
-  description: |
+login_page: # Optional
+  title: "Login to Foobar" # Optional, defaults to "Login"
+  dump_users: true # Optional, defaults to false
+  description: | # Optional, defaults to empty string
     **This is a test IdP**
     
     This is a _test_ of [Markdown](https://github.com/gomarkdown/markdown) rendering.
 
-services:
-  - entity_id: "foobar"
-    assertion_consumer_service: "http://localhost:5000"
+services: # Required
+  - entity_id: "foobar" # Required
+    assertion_consumer_service: "http://localhost:5000" # Required
 
-users:
-  - username: "test"
-    email: "test@test.com"
-    password: "test"
-    first_name: "Test"
-    last_name: "User"
+users: # Required
+  - username: "test" # Required
+    email: "test@test.com" # Required
+    password: "test" # Required
+    first_name: "Test" # Required
+    last_name: "User" # Required
