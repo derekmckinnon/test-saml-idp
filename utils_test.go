@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestOptions_GetBasePath(t *testing.T) {
+func Test_GetBasePath(t *testing.T) {
 	testCases := []struct {
 		baseUrl  string
 		basePath string
@@ -24,10 +24,9 @@ func TestOptions_GetBasePath(t *testing.T) {
 	for _, testCase := range testCases {
 		baseUrl, _ := url.Parse(testCase.baseUrl)
 
-		options := &ServerOptions{
-			BaseUrl: *baseUrl,
-		}
+		expected := testCase.basePath
+		actual := getBasePath(*baseUrl)
 
-		require.Equal(t, testCase.basePath, options.getBasePath())
+		require.Equal(t, expected, actual)
 	}
 }
