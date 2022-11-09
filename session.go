@@ -11,7 +11,11 @@ import (
 	"time"
 )
 
-var sessionMaxAge = time.Hour
+var sessionMaxAge = time.Hour * 24 * 14  // 14 days
+
+func init() {
+	saml.MaxIssueDelay = sessionMaxAge
+}
 
 func (s *Server) GetSession(w http.ResponseWriter, r *http.Request, req *saml.IdpAuthnRequest) *saml.Session {
 	if r.Method == http.MethodPost && r.PostForm.Get("username") != "" {
