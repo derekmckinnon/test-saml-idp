@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var sessionMaxAge = time.Hour * 24 * 14  // 14 days
+var sessionMaxAge = time.Hour * 24 * 14 // 14 days
 
 func init() {
 	saml.MaxIssueDelay = sessionMaxAge
@@ -125,7 +125,7 @@ func (s *Server) serveLoginPage(w http.ResponseWriter, r *http.Request, req *sam
 		data.Users = s.config.Users
 	}
 
-	render := s.router.HTMLRender.Instance("login.tmpl", data)
+	render := s.router.HTMLRender.Instance("login.html", data)
 
 	err := render.Render(w)
 	if err != nil {

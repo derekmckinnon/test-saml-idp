@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/crewjam/saml v0.4.6
 	github.com/gin-gonic/gin v1.7.7
+	github.com/gomarkdown/markdown v0.0.0-20220905174103-7b278df48cfb
 	github.com/google/uuid v1.3.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.7.2
@@ -20,7 +21,6 @@ require (
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/gomarkdown/markdown v0.0.0-20220905174103-7b278df48cfb // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

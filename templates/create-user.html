@@ -1,0 +1,52 @@
+{{template "header.html"}}
+
+<div class="row justify-content-center">
+    <div class="col-4">
+        <h1 class="mt-3 text-center">Create User</h1>
+
+        {{if .Errors}}
+            <div class="mt-3 alert alert-danger">
+                {{range .Errors}}
+                    <p>{{.}}</p>
+                {{end}}
+            </div>
+        {{end}}
+
+        {{if .Success}}
+            <div class="mt-3 alert alert-success">
+                User was created successfully!
+            </div>
+        {{end}}
+
+        <form method="post" autocomplete="off" class="mt-3">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label>
+                <input type="text" name="username" id="username" value="{{.Username}}" class="form-control" required autofocus>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" name="email" id="email" value="{{.Email}}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="first_name" class="form-label">First Name:</label>
+                <input type="text" name="first_name" id="first_name" value="{{.FirstName}}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Last Name:</label>
+                <input type="text" name="last_name" id="last_name" value="{{.LastName}}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</div>
+
+{{template "footer.html"}}

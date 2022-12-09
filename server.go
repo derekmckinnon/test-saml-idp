@@ -6,11 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"net/http"
 	"net/url"
 )
 
 const (
-	templatesGlob = "./templates/*.tmpl"
+	templatesGlob = "templates/*.html"
 	metadataRoute = "/metadata"
 	ssoRoute      = "/sso"
 	healthRoute   = "/health"
@@ -33,13 +34,15 @@ func New(options ServerOptions) *Server {
 
 	idp := buildIdp(*host, options)
 
-	router := buildRouter(*host, idp)
+	store := &Store{}
+
+	router := buildRouter(*host, idp, store)
 
 	server := &Server{
 		config: config,
 		idp:    idp,
 		router: router,
-		Store:  &Store{},
+		Store:  store,
 	}
 
 	idp.ServiceProviderProvider = server
@@ -66,7 +69,7 @@ func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
 	return idp
 }
 
-func buildRouter(host url.URL, idp *saml.IdentityProvider) *gin.Engine {
+func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.Engine {
 	basePath := getBasePath(host)
 
 	router := gin.Default()
@@ -87,6 +90,81 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider) *gin.Engine {
 
 	router.GET(basePath+healthRoute, func(c *gin.Context) {
 		c.String(200, "Healthy")
+	})
+
+	router.GET(basePath+"/users", func(c *gin.Context) {
+		users, err := store.GetUsers()
+		if err != nil {
+			users = []*samlidp.User{}
+		}
+
+		c.JSON(200, users)
+	})
+
+	router.GET(basePath+"/users/create", func(c *gin.Context) {
+		_, success := c.GetQuery("success")
+
+		c.HTML(200, "create-user.html", gin.H{
+			"Title":   "Create User",
+			"Success": success,
+		})
+	})
+
+	router.POST(basePath+"/users/create", func(c *gin.Context) {
+		var errors []string
+
+		username, ok := c.GetPostForm("username")
+		if !ok || len(username) == 0 {
+			errors = append(errors, "Username is required")
+		}
+
+		email, ok := c.GetPostForm("email")
+		if !ok || len(email) == 0 {
+			errors = append(errors, "Email is required")
+		}
+
+		firstName, ok := c.GetPostForm("first_name")
+		if !ok || len(firstName) == 0 {
+			errors = append(errors, "First Name is required")
+		}
+
+		lastName, ok := c.GetPostForm("last_name")
+		if !ok || len(lastName) == 0 {
+			errors = append(errors, "Username is required")
+		}
+
+		password, ok := c.GetPostForm("password")
+		if !ok || len(password) == 0 {
+			errors = append(errors, "Password is required")
+		}
+
+		if len(errors) > 0 {
+			c.HTML(200, "create-user.html", gin.H{
+				"Title":     "Create User",
+				"Errors":    errors,
+				"Username":  username,
+				"Email":     email,
+				"FirstName": firstName,
+				"LastName":  lastName,
+			})
+			return
+		}
+
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+		err := store.AddUser(&samlidp.User{
+			Name:           username,
+			Email:          email,
+			HashedPassword: hashedPassword,
+			GivenName:      firstName,
+			Surname:        lastName,
+		})
+
+		if err != nil {
+			errors = append(errors, err.Error())
+		}
+
+		c.Redirect(http.StatusFound, "/users/create?success")
 	})
 
 	return router
