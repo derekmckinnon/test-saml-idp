@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	templatesGlob = "./templates/*.tmpl"
+	templatesGlob = "templates/*.html"
 	metadataRoute = "/metadata"
 	ssoRoute      = "/sso"
 	healthRoute   = "/health"
