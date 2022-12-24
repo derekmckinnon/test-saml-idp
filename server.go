@@ -164,7 +164,7 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.En
 			errors = append(errors, err.Error())
 		}
 
-		c.Redirect(http.StatusFound, "/users/create?success")
+		c.Redirect(http.StatusFound, basePath+"/users/create?success")
 	})
 
 	return router
