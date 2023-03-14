@@ -7,8 +7,8 @@ login_page: # Optional
     This is a _test_ of [Markdown](https://github.com/gomarkdown/markdown) rendering.
 
 services: # Required
-  - entity_id: "foobar" # Required
-    assertion_consumer_service: "http://localhost:5000" # Required
+  - entity_id: "saml-test-sp" # Required
+    assertion_consumer_service: "http://localhost:9009/saml/acs" # Required
 
 users: # Required
   - username: "test" # Required
