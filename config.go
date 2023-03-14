@@ -13,11 +13,12 @@ type Service struct {
 }
 
 type User struct {
-	Username  string `mapstructure:"username"`
-	Email     string `mapstructure:"email"`
-	Password  string `mapstructure:"password"`
-	FirstName string `mapstructure:"first_name"`
-	LastName  string `mapstructure:"last_name"`
+	Username  string   `mapstructure:"username"`
+	Email     string   `mapstructure:"email"`
+	Password  string   `mapstructure:"password"`
+	FirstName string   `mapstructure:"first_name"`
+	LastName  string   `mapstructure:"last_name"`
+	Groups    []string `mapstructure:"groups"`
 }
 
 type LoginPageOptions struct {

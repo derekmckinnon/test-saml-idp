@@ -1,0 +1,19 @@
+version: "3.4"
+
+services:
+  idp:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config.yml:/etc/test-saml-idp/config.yml
+
+  service-provider:
+    image: ghcr.io/beryju/saml-test-sp
+    ports:
+      - "9009:9009"
+    environment:
+      SP_METADATA_URL: "http://idp:8080/metadata"
+    depends_on:
+      - idp

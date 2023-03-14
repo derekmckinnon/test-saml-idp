@@ -180,6 +180,7 @@ func (s *Server) LoadUsers(users []User) error {
 			HashedPassword: hashedPassword,
 			GivenName:      user.FirstName,
 			Surname:        user.LastName,
+			Groups:         user.Groups,
 		})
 
 		if err != nil {
