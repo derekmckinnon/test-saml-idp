@@ -16,3 +16,6 @@ users: # Required
     password: "test" # Required
     first_name: "Test" # Required
     last_name: "User" # Required
+    groups: # Optional
+      - "foobar"
+      - "baz"
