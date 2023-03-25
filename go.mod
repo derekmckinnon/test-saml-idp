@@ -1,6 +1,6 @@
 module github.com/derekmckinnon/test-saml-idp
 
-go 1.18
+go 1.20
 
 require (
 	github.com/crewjam/saml v0.4.6
