@@ -72,7 +72,16 @@ func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
 func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.Engine {
 	basePath := getBasePath(host)
 
-	router := gin.Default()
+	loggerConfig := gin.LoggerConfig{
+		SkipPaths: []string{
+			healthRoute,
+			basePath + healthRoute,
+		},
+	}
+
+	router := gin.New()
+	router.Use(gin.LoggerWithConfig(loggerConfig), gin.Recovery())
+
 	router.LoadHTMLGlob(templatesGlob)
 
 	router.GET(basePath+metadataRoute, func(c *gin.Context) {
