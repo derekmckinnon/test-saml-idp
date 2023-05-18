@@ -12,7 +12,7 @@ The IdP is built using:
 
 # Getting Started
 
-This project requires Go 1.18+ for development.
+This project requires Go 1.20+ for development.
 
 1. `cp config.example.yml config.yml`
 2. Populate `config.yml` with your own service provider and user configuration
