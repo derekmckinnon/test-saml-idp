@@ -1,4 +1,4 @@
-FROM golang:1.20 as build
+FROM golang:1.21-bullseye as build
 
 WORKDIR /src
 
@@ -6,9 +6,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build ./cmd/server
+RUN CGO_ENABLED=1 go build ./cmd/server
 
-FROM gcr.io/distroless/base
+FROM gcr.io/distroless/base-debian11
 
 WORKDIR /app
 
