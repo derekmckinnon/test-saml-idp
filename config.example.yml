@@ -19,3 +19,5 @@ users: # Required
     groups: # Optional
       - "foobar"
       - "baz"
+
+session_max_age: 1 # Optional, defaults to 60 (minutes)

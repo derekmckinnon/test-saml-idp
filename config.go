@@ -5,6 +5,9 @@ type Config struct {
 	Services         []Service        `mapstructure:"services"`
 	Users            []User           `mapstructure:"users"`
 	LoginPageOptions LoginPageOptions `mapstructure:"login_page"`
+
+	// The number of minutes that the SAML session is valid for
+	SessionMaxAge int `mapstructure:"session_max_age"`
 }
 
 type Service struct {

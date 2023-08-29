@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	templatesGlob = "templates/*.html"
-	metadataRoute = "/metadata"
-	ssoRoute      = "/sso"
-	healthRoute   = "/health"
+	templatesGlob        = "templates/*.html"
+	metadataRoute        = "/metadata"
+	ssoRoute             = "/sso"
+	healthRoute          = "/health"
+	defaultSessionMaxAge = 60 // 1 hour
 )
 
 type Server struct {
@@ -26,6 +27,9 @@ type Server struct {
 
 func New(options ServerOptions) *Server {
 	config := options.Config
+	if config.SessionMaxAge == 0 {
+		config.SessionMaxAge = defaultSessionMaxAge
+	}
 
 	host, err := url.Parse(config.Host)
 	if err != nil {
