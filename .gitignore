@@ -170,3 +170,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/go,goland,macos,windows
 
 config.yml
+*.pem
