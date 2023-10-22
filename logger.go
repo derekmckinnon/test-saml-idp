@@ -9,7 +9,7 @@ type zerologAdapter struct {
 }
 
 func (l zerologAdapter) Printf(format string, v ...interface{}) {
-	log.Info().Msgf(format, v)
+	log.Info().Msgf(format, v...)
 }
 
 func (l zerologAdapter) Print(v ...interface{}) {
@@ -25,7 +25,7 @@ func (l zerologAdapter) Fatal(v ...interface{}) {
 }
 
 func (l zerologAdapter) Fatalf(format string, v ...interface{}) {
-	log.Fatal().Msgf(format, v)
+	log.Fatal().Msgf(format, v...)
 }
 
 func (l zerologAdapter) Fatalln(v ...interface{}) {
@@ -37,7 +37,7 @@ func (l zerologAdapter) Panic(v ...interface{}) {
 }
 
 func (l zerologAdapter) Panicf(format string, v ...interface{}) {
-	log.Panic().Msgf(format, v)
+	log.Panic().Msgf(format, v...)
 }
 
 func (l zerologAdapter) Panicln(v ...interface{}) {
