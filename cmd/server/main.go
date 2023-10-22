@@ -2,25 +2,37 @@ package main
 
 import (
 	idp "github.com/derekmckinnon/test-saml-idp"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
-	"log"
 )
 
-func main() {
-	log.SetPrefix("[IdP] ")
+func init() {
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
+	viper.AutomaticEnv()
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath("/etc/test-saml-idp/")
+	viper.AddConfigPath(".")
+
+	viper.SetDefault("Host", "http://localhost:8080")
+}
+
+func main() {
 	config, err := loadConfig()
 	if err != nil {
-		log.Fatalf("error loading configuration: %v", err)
+		log.Error().Err(err).Msg("error loading configuration")
 	}
 
-	log.Println("Generating development certificate")
+	log.Info().Msg("Generating development certificate")
 	cert, key, err := idp.GenerateDevelopmentCertificate()
 	if err != nil {
-		log.Fatalf("could not generate development certificate: %v", err)
+		log.Error().Err(err).Msg("could not generate development certificate")
 	}
 
-	log.Println("Initializing IdP Server...")
+	log.Info().Msg("Initializing IdP Server...")
 	server := idp.New(idp.ServerOptions{
 		Config:      config,
 		Key:         key,
@@ -29,29 +41,21 @@ func main() {
 
 	err = server.LoadUsers(config.Users)
 	if err != nil {
-		log.Fatalf("cannot initialize users: %v", err)
+		log.Error().Err(err).Msg("cannot initialize users")
 	}
 
 	err = server.LoadServices(config.Services)
 	if err != nil {
-		log.Fatalf("cannot initialize services: %v", err)
+		log.Error().Err(err).Msg("cannot initialize services")
 	}
 
-	log.Println("Starting IdP Server...")
+	log.Info().Msg("Starting IdP Server...")
 	if err = server.Run(); err != nil {
-		log.Fatalf("cannot run server: %v", err)
+		log.Error().Err(err).Msg("cannot run server")
 	}
 }
 
 func loadConfig() (*idp.Config, error) {
-	viper.SetDefault("Host", "http://localhost:8080")
-
-	viper.SetConfigName("config")
-	viper.SetConfigType("yml")
-	viper.AddConfigPath("/etc/test-saml-idp/")
-	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
-
 	err := viper.BindEnv("Host", "HOST")
 	if err != nil {
 		return nil, err

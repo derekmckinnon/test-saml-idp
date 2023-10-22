@@ -3,9 +3,10 @@ package idp
 import (
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlidp"
+	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -33,7 +34,7 @@ func New(options ServerOptions) *Server {
 
 	host, err := url.Parse(config.Host)
 	if err != nil {
-		log.Fatalf("cannot parse host URL: %v", err)
+		log.Fatal().Err(err).Msg("cannot parse host URL")
 	}
 
 	idp := buildIdp(*host, options)
@@ -63,7 +64,7 @@ func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
 	ssoUrl.Path += ssoRoute
 
 	idp := &saml.IdentityProvider{
-		Logger:      log.Default(),
+		Logger:      &zerologAdapter{},
 		Certificate: options.Certificate,
 		Key:         options.Key,
 		MetadataURL: metadataUrl,
@@ -76,15 +77,11 @@ func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
 func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.Engine {
 	basePath := getBasePath(host)
 
-	loggerConfig := gin.LoggerConfig{
-		SkipPaths: []string{
-			healthRoute,
-			basePath + healthRoute,
-		},
-	}
-
 	router := gin.New()
-	router.Use(gin.LoggerWithConfig(loggerConfig), gin.Recovery())
+	router.Use(logger.SetLogger(
+		logger.WithSkipPath([]string{healthRoute, basePath + healthRoute}),
+	))
+	router.Use(gin.Recovery())
 
 	router.LoadHTMLGlob(templatesGlob)
 
@@ -200,7 +197,7 @@ func (s *Server) LoadUsers(users []User) error {
 			return err
 		}
 
-		log.Printf("Initialized User: %s\n", user.Username)
+		log.Info().Str("username", user.Username).Msg("initialized user")
 	}
 
 	return nil
@@ -229,7 +226,7 @@ func (s *Server) LoadServices(services []Service) error {
 			return err
 		}
 
-		log.Printf("Initialized service provider: %s\n", service.EntityId)
+		log.Info().Str("serviceProvider", service.EntityId).Msg("Initialized service provider")
 	}
 
 	return nil
