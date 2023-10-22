@@ -78,31 +78,37 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.En
 	basePath := getBasePath(host)
 
 	router := gin.New()
-	router.Use(logger.SetLogger(
-		logger.WithSkipPath([]string{healthRoute, basePath + healthRoute}),
-	))
+
+	skipPaths := []string{
+		healthRoute,
+		basePath + healthRoute,
+	}
+
+	router.Use(logger.SetLogger(logger.WithSkipPath(skipPaths)))
 	router.Use(gin.Recovery())
 
 	router.LoadHTMLGlob(templatesGlob)
 
-	router.GET(basePath+metadataRoute, func(c *gin.Context) {
+	group := router.Group(basePath)
+
+	group.GET(metadataRoute, func(c *gin.Context) {
 		metadata := idp.Metadata()
 		c.XML(200, metadata)
 	})
 
-	router.GET(basePath+ssoRoute, func(c *gin.Context) {
+	group.GET(ssoRoute, func(c *gin.Context) {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	router.POST(basePath+ssoRoute, func(c *gin.Context) {
+	group.POST(ssoRoute, func(c *gin.Context) {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	router.GET(basePath+healthRoute, func(c *gin.Context) {
+	group.GET(healthRoute, func(c *gin.Context) {
 		c.String(200, "Healthy")
 	})
 
-	router.GET(basePath+"/users", func(c *gin.Context) {
+	group.GET("/users", func(c *gin.Context) {
 		users, err := store.GetUsers()
 		if err != nil {
 			users = []*samlidp.User{}
@@ -111,7 +117,7 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.En
 		c.JSON(200, users)
 	})
 
-	router.GET(basePath+"/users/create", func(c *gin.Context) {
+	group.GET("/users/create", func(c *gin.Context) {
 		_, success := c.GetQuery("success")
 
 		c.HTML(200, "create-user.html", gin.H{
@@ -120,7 +126,7 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.En
 		})
 	})
 
-	router.POST(basePath+"/users/create", func(c *gin.Context) {
+	group.POST("/users/create", func(c *gin.Context) {
 		var errors []string
 
 		username, ok := c.GetPostForm("username")
