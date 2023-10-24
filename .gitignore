@@ -171,3 +171,5 @@ $RECYCLE.BIN/
 
 config.yml
 *.pem
+*.crt
+*.key
