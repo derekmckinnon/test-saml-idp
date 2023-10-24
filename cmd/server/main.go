@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
 	idp "github.com/derekmckinnon/test-saml-idp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -23,36 +25,62 @@ func init() {
 func main() {
 	config, err := loadConfig()
 	if err != nil {
-		log.Error().Err(err).Msg("error loading configuration")
+		log.Fatal().Err(err).Msg("error loading configuration")
 	}
 
-	log.Info().Msg("Generating development certificate")
-	cert, key, err := idp.GenerateDevelopmentCertificate()
-	if err != nil {
-		log.Error().Err(err).Msg("could not generate development certificate")
-	}
+	log.Info().Msg("Loading certificate and key")
+	cert, key := loadCertificateAndKey(config)
 
-	log.Info().Msg("Initializing IdP Server...")
 	server := idp.New(idp.ServerOptions{
 		Config:      config,
 		Key:         key,
 		Certificate: cert,
 	})
 
+	log.Info().Msg("Loading users")
 	err = server.LoadUsers(config.Users)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot initialize users")
+		log.Fatal().Err(err).Msg("error loading users")
 	}
 
+	log.Info().Msg("Loading services")
 	err = server.LoadServices(config.Services)
 	if err != nil {
-		log.Error().Err(err).Msg("cannot initialize services")
+		log.Fatal().Err(err).Msg("error loading services")
 	}
 
-	log.Info().Msg("Starting IdP Server...")
+	log.Info().Msg("Starting server")
 	if err = server.Run(); err != nil {
-		log.Error().Err(err).Msg("cannot run server")
+		log.Fatal().Err(err).Msg("error running server")
 	}
+}
+
+func loadCertificateAndKey(config *idp.Config) (*x509.Certificate, *rsa.PrivateKey) {
+	certPath, keyPath := config.CertificatePath, config.KeyPath
+
+	if certPath == "" || keyPath == "" {
+		log.Info().Msg("Generating development certificate")
+		cert, key, err := idp.GenerateDevelopmentCertificateAndKey()
+		if err != nil {
+			log.Fatal().Err(err).Msg("could not generate development certificate")
+		}
+
+		return cert, key
+	}
+
+	log.Info().Str("path", config.CertificatePath).Msg("Loading certificate from the filesystem")
+	cert, err := idp.LoadCertificatePem(config.CertificatePath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("error loading certificate")
+	}
+
+	log.Info().Str("path", config.KeyPath).Msg("Loading private key from the filesystem")
+	key, err := idp.LoadPrivateKeyPem(config.KeyPath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("error loading private key")
+	}
+
+	return cert, key
 }
 
 func loadConfig() (*idp.Config, error) {

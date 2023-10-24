@@ -8,7 +8,7 @@ import (
 )
 
 func TestGenerateDevelopmentCertificate(t *testing.T) {
-	cert, key, err := GenerateDevelopmentCertificate()
+	cert, key, err := GenerateDevelopmentCertificateAndKey()
 	require.NoError(t, err)
 	require.NotNil(t, cert)
 	require.NotNil(t, key)
