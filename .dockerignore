@@ -1,2 +1,5 @@
 .github
 *.md
+*.yml
+*.crt
+*.key

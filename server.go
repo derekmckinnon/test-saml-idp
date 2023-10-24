@@ -3,9 +3,10 @@ package idp
 import (
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlidp"
+	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -33,7 +34,7 @@ func New(options ServerOptions) *Server {
 
 	host, err := url.Parse(config.Host)
 	if err != nil {
-		log.Fatalf("cannot parse host URL: %v", err)
+		log.Fatal().Err(err).Msg("cannot parse host URL")
 	}
 
 	idp := buildIdp(*host, options)
@@ -63,7 +64,7 @@ func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
 	ssoUrl.Path += ssoRoute
 
 	idp := &saml.IdentityProvider{
-		Logger:      log.Default(),
+		Logger:      &zerologAdapter{},
 		Certificate: options.Certificate,
 		Key:         options.Key,
 		MetadataURL: metadataUrl,
@@ -76,36 +77,38 @@ func buildIdp(host url.URL, options ServerOptions) *saml.IdentityProvider {
 func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.Engine {
 	basePath := getBasePath(host)
 
-	loggerConfig := gin.LoggerConfig{
-		SkipPaths: []string{
-			healthRoute,
-			basePath + healthRoute,
-		},
+	router := gin.New()
+
+	skipPaths := []string{
+		healthRoute,
+		basePath + healthRoute,
 	}
 
-	router := gin.New()
-	router.Use(gin.LoggerWithConfig(loggerConfig), gin.Recovery())
+	router.Use(logger.SetLogger(logger.WithSkipPath(skipPaths)))
+	router.Use(gin.Recovery())
 
 	router.LoadHTMLGlob(templatesGlob)
 
-	router.GET(basePath+metadataRoute, func(c *gin.Context) {
+	group := router.Group(basePath)
+
+	group.GET(metadataRoute, func(c *gin.Context) {
 		metadata := idp.Metadata()
 		c.XML(200, metadata)
 	})
 
-	router.GET(basePath+ssoRoute, func(c *gin.Context) {
+	group.GET(ssoRoute, func(c *gin.Context) {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	router.POST(basePath+ssoRoute, func(c *gin.Context) {
+	group.POST(ssoRoute, func(c *gin.Context) {
 		idp.ServeSSO(c.Writer, c.Request)
 	})
 
-	router.GET(basePath+healthRoute, func(c *gin.Context) {
+	group.GET(healthRoute, func(c *gin.Context) {
 		c.String(200, "Healthy")
 	})
 
-	router.GET(basePath+"/users", func(c *gin.Context) {
+	group.GET("/users", func(c *gin.Context) {
 		users, err := store.GetUsers()
 		if err != nil {
 			users = []*samlidp.User{}
@@ -114,7 +117,7 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.En
 		c.JSON(200, users)
 	})
 
-	router.GET(basePath+"/users/create", func(c *gin.Context) {
+	group.GET("/users/create", func(c *gin.Context) {
 		_, success := c.GetQuery("success")
 
 		c.HTML(200, "create-user.html", gin.H{
@@ -123,7 +126,7 @@ func buildRouter(host url.URL, idp *saml.IdentityProvider, store *Store) *gin.En
 		})
 	})
 
-	router.POST(basePath+"/users/create", func(c *gin.Context) {
+	group.POST("/users/create", func(c *gin.Context) {
 		var errors []string
 
 		username, ok := c.GetPostForm("username")
@@ -200,7 +203,7 @@ func (s *Server) LoadUsers(users []User) error {
 			return err
 		}
 
-		log.Printf("Initialized User: %s\n", user.Username)
+		log.Info().Str("username", user.Username).Msg("initialized user")
 	}
 
 	return nil
@@ -229,7 +232,7 @@ func (s *Server) LoadServices(services []Service) error {
 			return err
 		}
 
-		log.Printf("Initialized service provider: %s\n", service.EntityId)
+		log.Info().Str("serviceProvider", service.EntityId).Msg("Initialized service provider")
 	}
 
 	return nil

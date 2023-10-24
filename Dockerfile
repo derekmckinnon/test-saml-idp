@@ -17,7 +17,6 @@ ENV PORT=8080
 ENV BASE_URL=http://localhost:$PORT
 
 COPY --from=build /src/server ./
-COPY *.pem ./
 COPY templates ./templates
 
 EXPOSE $PORT
