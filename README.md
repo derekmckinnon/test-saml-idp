@@ -12,20 +12,35 @@ The IdP is built using:
 
 # Getting Started
 
-This project requires Go 1.21 for development.
+This project requires Go 1.21+ for development.
 
 1. `cp config.example.yml config.yml`
 2. Populate `config.yml` with your own service provider and user configuration
+3. (Optional) Generate a certificate and private key
+   1. `make cert`
+   2. Update `config.yml` with the following lines:
+      1. `certificate: /etc/test-saml-idp/saml.crt`
+      2. `key: /etc/test-saml-idp/saml.key`
 
 # Usage
 
 To run locally:
 
 ```shell
-go run ./cmd/server
+make server
 ```
 
 This will launch the IdP on port `8080` by default.
+The default metadata url is: http://localhost:8080/metadata.
+
+You can also run the Docker version of the IdP alongside an example Service Provider:
+
+```shell
+docker compose up
+```
+
+You can access the SP via: http://localhost:9009.
+If it fails to load the first time due to missing metadata, try killing it and running again.
 
 # Configuration
 

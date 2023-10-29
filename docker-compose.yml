@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config.yml:/etc/test-saml-idp/config.yml
+      - ./:/etc/test-saml-idp/
 
   service-provider:
     image: ghcr.io/beryju/saml-test-sp
