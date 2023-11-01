@@ -1,16 +1,16 @@
 package idp
 
 type Config struct {
-	Host             string           `mapstructure:"host"`
-	Services         []Service        `mapstructure:"services"`
-	Users            []User           `mapstructure:"users"`
-	LoginPageOptions LoginPageOptions `mapstructure:"login_page"`
+	Host      string           `mapstructure:"host"`
+	Services  []Service        `mapstructure:"services"`
+	Users     []User           `mapstructure:"users"`
+	LoginPage LoginPageOptions `mapstructure:"login_page"`
 
 	// Optional. If empty, an auto-generated certificate and key will be used
 	CertificatePath string `mapstructure:"certificate"`
 	KeyPath         string `mapstructure:"key"`
 
-	// The number of minutes that the SAML session is valid for
+	// Optional. The number of minutes that the SAML session is valid for. Defaults to 60
 	SessionMaxAge int `mapstructure:"session_max_age"`
 }
 

@@ -21,3 +21,7 @@ users: # Required
       - "baz"
 
 session_max_age: 1 # Optional, defaults to 60 (minutes)
+
+# Optional, for use with custom self-signed x509 certificates
+#certificate: /etc/test-saml-idp/saml.crt
+#key: /etc/test-saml-idp/saml.key

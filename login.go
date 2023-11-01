@@ -29,7 +29,7 @@ func (s *Server) serveLoginPage(w http.ResponseWriter, r *http.Request, req *sam
 		RelayState:  req.RelayState,
 	}
 
-	options := s.config.LoginPageOptions
+	options := s.config.LoginPage
 
 	if options.Title != "" {
 		data.Title = options.Title
