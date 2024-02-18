@@ -8,3 +8,6 @@ cert:
 
 server:
 	go run cmd/server/*.go
+
+image:
+	docker build -t test-saml-idp .
