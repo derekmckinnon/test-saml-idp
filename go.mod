@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.32.0
 	github.com/spf13/viper v1.18.2
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.20.0
 )
 
