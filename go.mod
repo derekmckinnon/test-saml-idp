@@ -6,7 +6,7 @@ require (
 	github.com/crewjam/saml v0.4.14
 	github.com/gin-contrib/logger v1.1.2
 	github.com/gin-gonic/gin v1.10.0
-	github.com/gomarkdown/markdown v0.0.0-20240930133441-72d49d9543d8
+	github.com/gomarkdown/markdown v0.0.0-20241102151059-6bc1ffdc6e8c
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
