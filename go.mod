@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/crewjam/saml v0.4.14
-	github.com/gin-contrib/logger v1.2.1
+	github.com/gin-contrib/logger v1.2.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/gomarkdown/markdown v0.0.0-20241105142532-d03b89096d81
 	github.com/google/uuid v1.6.0
