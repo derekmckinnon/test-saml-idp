@@ -1,6 +1,8 @@
 module github.com/derekmckinnon/test-saml-idp
 
-go 1.22
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/crewjam/saml v0.4.14
@@ -11,7 +13,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.34.0
 )
 
 require (
