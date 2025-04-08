@@ -6,7 +6,7 @@ toolchain go1.24.2
 
 require (
 	github.com/crewjam/saml v0.4.14
-	github.com/gin-contrib/logger v1.2.4
+	github.com/gin-contrib/logger v1.2.5
 	github.com/gin-gonic/gin v1.10.0
 	github.com/gomarkdown/markdown v0.0.0-20250311123330-531bef5e742b
 	github.com/google/uuid v1.6.0
