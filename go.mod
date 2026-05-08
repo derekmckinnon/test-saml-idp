@@ -2,7 +2,7 @@ module github.com/derekmckinnon/test-saml-idp
 
 go 1.25.0
 
-toolchain go1.26.2
+toolchain go1.26.3
 
 require (
 	github.com/crewjam/saml v0.5.1
