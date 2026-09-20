@@ -8,7 +8,7 @@ require (
 	github.com/crewjam/saml v0.5.1
 	github.com/gin-contrib/logger v1.2.8
 	github.com/gin-gonic/gin v1.12.0
-	github.com/gomarkdown/markdown v0.0.0-20260907091611-16791ada75cf
+	github.com/gomarkdown/markdown v0.0.0-20260917010721-cc30ffac3c05
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/viper v1.21.0
