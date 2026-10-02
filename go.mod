@@ -1,19 +1,19 @@
 module github.com/derekmckinnon/test-saml-idp
 
-go 1.25.0
+go 1.26.0
 
 toolchain go1.27.1
 
 require (
 	github.com/crewjam/saml v0.5.1
-	github.com/gin-contrib/logger v1.2.8
+	github.com/gin-contrib/logger v1.2.9
 	github.com/gin-gonic/gin v1.12.0
 	github.com/gomarkdown/markdown v0.0.0-20260907091611-16791ada75cf
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.12.1
-	golang.org/x/crypto v0.55.0
+	golang.org/x/crypto v0.56.0
 )
 
 require (
