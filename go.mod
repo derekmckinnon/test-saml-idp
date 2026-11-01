@@ -1,12 +1,12 @@
 module github.com/derekmckinnon/test-saml-idp
 
-go 1.26.0
+go 1.26.10
 
 toolchain go1.27.3
 
 require (
 	github.com/crewjam/saml v0.5.1
-	github.com/gin-contrib/logger v1.2.9
+	github.com/gin-contrib/logger v1.2.10
 	github.com/gin-gonic/gin v1.12.0
 	github.com/gomarkdown/markdown v0.0.0-20261011113952-f83953680332
 	github.com/google/uuid v1.6.0
