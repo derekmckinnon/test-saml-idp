@@ -126,6 +126,8 @@ github.com/gin-contrib/logger v1.2.8 h1:KEp4kkfVmDkZ9tYVnOByi8AS7SA9XaYTeOBcm2SY
 github.com/gin-contrib/logger v1.2.8/go.mod h1:Ih7HXU6jylcjBHrNbuVDiMSxQf6MDLTWKrbEsf+SmeY=
 github.com/gin-contrib/logger v1.2.9 h1:DscaY3jTzEXJ2gg1cRV+FiVx/78qAKMXObNF+pm7MN8=
 github.com/gin-contrib/logger v1.2.9/go.mod h1:qbvZdd6wuzCOIhm6zqLdJiMs19sCUSkOQQYwUGSTN8A=
+github.com/gin-contrib/logger v1.2.10 h1:UslrdAYmiyxfDoLO+xjFnTWsVjgHHMZSQ3AT9J4CH9A=
+github.com/gin-contrib/logger v1.2.10/go.mod h1:hoi6NmUjCjvhcnvsYRvh/BzkYl0dMHe6qfwr3cv5TCM=
 github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE=
 github.com/gin-contrib/sse v0.1.0/go.mod h1:RHrZQHXnP2xjPF+u1gW/2HnVO7nvIa9PG3Gm+fLHvGI=
 github.com/gin-contrib/sse v1.0.0 h1:y3bT1mUWUxDpW4JLQg/HnTqV4rozuW4tC9eFKTxYI9E=
