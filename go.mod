@@ -6,7 +6,7 @@ toolchain go1.27.3
 
 require (
 	github.com/crewjam/saml v0.5.1
-	github.com/gin-contrib/logger v1.2.10
+	github.com/gin-contrib/logger v1.2.11
 	github.com/gin-gonic/gin v1.12.0
 	github.com/gomarkdown/markdown v0.0.0-20261107153045-a51d70be185e
 	github.com/google/uuid v1.6.0
@@ -69,7 +69,7 @@ require (
 	golang.org/x/arch v0.29.0 // indirect
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
 	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
