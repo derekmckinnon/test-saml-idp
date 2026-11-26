@@ -249,6 +249,8 @@ github.com/gomarkdown/markdown v0.0.0-20261031165833-acfab5edc1ce h1:a5HfnXP3+Dx
 github.com/gomarkdown/markdown v0.0.0-20261031165833-acfab5edc1ce/go.mod h1:zLCvXLlUnS5tvOi4hpJgzzpJsq0+dliwn85VbPh1JbQ=
 github.com/gomarkdown/markdown v0.0.0-20261107153045-a51d70be185e h1:lbBfsSxhoWoBfxvjUTxfgC1tl2HSsTvy2g8Ht/fAgOE=
 github.com/gomarkdown/markdown v0.0.0-20261107153045-a51d70be185e/go.mod h1:zLCvXLlUnS5tvOi4hpJgzzpJsq0+dliwn85VbPh1JbQ=
+github.com/gomarkdown/markdown v0.0.0-20261124143954-1814b856890d h1:TNmJpszOE9CvuUDlgmImqL+nCH75TCmY0GrSPA0/gEw=
+github.com/gomarkdown/markdown v0.0.0-20261124143954-1814b856890d/go.mod h1:y1k49yXXXS2Kifibe9TEOef1b8dMvgpCrSMq4iKd7D8=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
